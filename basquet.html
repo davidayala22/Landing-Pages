@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARO — Pelota de cancha con grip real</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F5F3EE; --ink:#141414; --orange:#FF5B1F; --orange-deep:#D6440E;
+    --line:rgba(20,20,20,0.12); --bar:#141414;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;line-height:1.5;}
+  h1,h2{font-family:'Archivo Black',sans-serif;text-transform:uppercase;line-height:1.15;}
+  a{color:inherit;text-decoration:none;}
+
+  .page{max-width:480px;margin:0 auto;background:#fff;min-height:100vh;box-shadow:0 0 60px rgba(0,0,0,0.06);transition:max-width .2s;}
+
+  .topbar{
+    background:var(--bar);color:#fff;font-size:12px;padding:9px 16px;
+    display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;
+  }
+  .topbar b{color:var(--orange);}
+
+  header{padding:14px 20px;border-bottom:1px solid var(--line);}
+  nav{display:flex;justify-content:space-between;align-items:center;}
+  .logo{font-family:'Archivo Black';font-size:18px;}
+  .icons{display:flex;gap:16px;font-size:17px;opacity:0.8;align-items:center;}
+  .cart-wrap{position:relative;}
+  .cart-badge{
+    position:absolute;top:-8px;right:-10px;background:var(--orange);color:#fff;
+    font-size:10px;font-weight:800;width:16px;height:16px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;font-family:'Inter';opacity:0;transform:scale(0);
+    transition:transform .25s;
+  }
+  .cart-badge.show{opacity:1;transform:scale(1);}
+
+  /* ---- grid areas: mobile default stacks in document order via named areas ---- */
+  .top{
+    display:grid;
+    grid-template-columns:1fr;
+    grid-template-areas:
+      "media"
+      "thumbs"
+      "benefits"
+      "guarantee"
+      "notif"
+      "title"
+      "rating"
+      "checklist"
+      "packs"
+      "stock"
+      "cta";
+  }
+  .g-media{grid-area:media;position:relative;padding:20px 20px 0;}
+  .g-thumbs{grid-area:thumbs;}
+  .g-benefits{grid-area:benefits;}
+  .g-guarantee{grid-area:guarantee;}
+  .g-notif{grid-area:notif;}
+  .g-title{grid-area:title;}
+  .g-rating{grid-area:rating;}
+  .g-checklist{grid-area:checklist;}
+  .g-packs{grid-area:packs;}
+  .g-stock{grid-area:stock;}
+  .g-cta{grid-area:cta;}
+
+  .badge-free{
+    position:absolute;top:34px;left:30px;z-index:2;
+    background:var(--orange);color:#fff;font-size:11px;font-weight:700;
+    padding:5px 11px;border-radius:6px;letter-spacing:0.02em;
+  }
+  .hero-img{border-radius:16px;overflow:hidden;aspect-ratio:1/1;background:#1B1B1B;}
+  .hero-img img{width:100%;height:100%;object-fit:cover;display:block;}
+
+  .thumbs{display:flex;gap:8px;padding:10px 20px 0;}
+  .thumb{
+    width:56px;height:56px;border-radius:9px;overflow:hidden;flex-shrink:0;cursor:pointer;
+    border:2px solid transparent;opacity:0.6;transition:.15s;
+  }
+  .thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+  .thumb.active{border-color:var(--orange);opacity:1;}
+
+  .benefits{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px 20px 0;}
+  .benefit{
+    background:var(--ink);color:#fff;border-radius:12px;padding:14px 12px;
+    font-size:12.5px;font-weight:600;line-height:1.3;
+  }
+  .benefit .ic{font-size:20px;display:block;margin-bottom:8px;}
+
+  .guarantee-row{
+    display:flex;justify-content:space-around;padding:16px 20px;font-size:11.5px;
+    color:var(--orange-deep);font-weight:700;text-align:center;
+  }
+  .guarantee-row span{flex:1;}
+
+  .notif{
+    margin:0 20px 18px;background:#fff;border:1px solid var(--line);border-radius:12px;
+    padding:12px 14px;display:flex;gap:10px;align-items:flex-start;
+    box-shadow:0 6px 18px rgba(0,0,0,0.06);
+  }
+  .notif .dot{
+    width:30px;height:30px;border-radius:50%;background:var(--orange);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;
+  }
+  .notif strong{font-size:13px;display:block;}
+  .notif p{font-size:12.5px;opacity:0.75;margin:1px 0 3px;}
+  .notif span{font-size:11px;color:var(--orange-deep);font-weight:600;}
+
+  .g-title{padding:4px 20px 0;}
+  .g-title h1{font-size:22px;margin-bottom:0;}
+  .g-rating{padding:10px 20px 0;}
+  .rating{font-size:13px;color:var(--orange-deep);font-weight:700;}
+  .rating span{color:var(--ink);opacity:0.6;font-weight:500;margin-left:4px;font-family:'Inter';text-transform:none;}
+
+  .g-checklist{padding:16px 20px 24px;}
+  .checklist{list-style:none;}
+  .checklist li{display:flex;gap:10px;font-size:14px;padding:7px 0;align-items:flex-start;}
+  .checklist li::before{content:"✔";color:var(--orange);font-weight:700;flex-shrink:0;}
+
+  .packs{display:flex;flex-direction:column;gap:10px;padding:0 20px;}
+  .pack{
+    border:2px solid var(--line);border-radius:14px;padding:14px 16px;
+    display:flex;justify-content:space-between;align-items:center;position:relative;
+    cursor:pointer;background:#fff;width:100%;font:inherit;text-align:left;transition:.15s;
+  }
+  .pack.chosen{border-color:var(--orange);background:rgba(255,91,31,0.05);}
+  .pack .badge{
+    position:absolute;top:-11px;left:16px;background:var(--orange);color:#fff;
+    font-size:10.5px;font-weight:700;padding:3px 10px;border-radius:99px;
+  }
+  .pack-left{display:flex;align-items:center;}
+  .pack .radio{
+    width:18px;height:18px;border-radius:50%;border:2px solid var(--line);flex-shrink:0;
+    margin-right:10px;position:relative;
+  }
+  .pack.chosen .radio{border-color:var(--orange);}
+  .pack.chosen .radio::after{content:"";position:absolute;inset:3px;border-radius:50%;background:var(--orange);}
+  .pack .name{font-size:14px;font-weight:700;color:var(--ink);}
+  .pack .sub{font-size:12px;opacity:0.65;color:var(--ink);}
+  .pack .price{text-align:right;}
+  .pack .now{font-size:16px;font-weight:700;color:var(--orange-deep);}
+  .pack .old{font-size:12px;text-decoration:line-through;opacity:0.5;}
+
+  .g-stock{padding:18px 20px;}
+  .stock-bar{height:7px;background:var(--line);border-radius:99px;overflow:hidden;margin-bottom:6px;}
+  .stock-bar .fill{height:100%;width:82%;background:var(--orange);}
+  .stock p{font-size:12px;font-weight:700;color:var(--orange-deep);}
+
+  .g-cta{padding:0 20px 24px;}
+  .cta-btn{
+    display:block;width:100%;text-align:center;background:var(--ink);color:#fff;
+    padding:16px;border-radius:12px;font-weight:700;font-size:15px;border:none;cursor:pointer;
+    text-transform:uppercase;letter-spacing:0.02em;font-family:'Inter';transition:background .15s, transform .1s;
+  }
+  .cta-btn:hover{background:#000;}
+  .cta-btn:active{transform:scale(0.98);}
+
+  .toast{
+    position:fixed;left:50%;bottom:28px;transform:translate(-50%,140%);
+    background:var(--ink);color:#fff;padding:12px 20px;border-radius:99px;font-size:13px;font-weight:600;
+    display:flex;align-items:center;gap:8px;transition:transform .3s ease;z-index:50;white-space:nowrap;
+    box-shadow:0 10px 24px rgba(0,0,0,0.25);text-transform:none;
+  }
+  .toast.show{transform:translate(-50%,0);}
+
+  .transform{padding:26px 20px;background:#EFEBE3;}
+  .transform img{width:100%;border-radius:14px;aspect-ratio:16/11;object-fit:cover;margin-bottom:14px;}
+  .transform .tag{font-size:11.5px;font-weight:700;color:var(--orange-deep);letter-spacing:0.03em;}
+  .transform h2{font-size:18px;margin:8px 0 8px;}
+  .transform p{font-size:13.5px;opacity:0.75;font-family:'Inter';text-transform:none;}
+
+  .proof{padding:28px 20px;text-align:center;}
+  .proof h2{font-size:18px;margin-bottom:6px;}
+  .proof .count{font-size:13px;color:var(--orange-deep);font-weight:700;margin-bottom:16px;font-family:'Inter';text-transform:none;}
+  .avatars{display:flex;justify-content:center;gap:8px;}
+  .avatars img{width:52px;height:52px;border-radius:50%;object-fit:cover;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.1);}
+
+  .reviews{padding:8px 20px 32px;}
+  .reviews-head{margin-bottom:18px;}
+  .reviews-head h2{font-size:20px;margin-bottom:8px;}
+  .reviews-rating{font-size:13px;color:var(--orange-deep);font-weight:700;}
+  .reviews-rating span{color:var(--ink);opacity:0.6;font-weight:500;font-family:'Inter';text-transform:none;margin-left:4px;}
+  .reviews-grid{display:flex;flex-direction:column;gap:12px;}
+  .review-card{border:1px solid var(--line);border-radius:14px;padding:16px;background:#fff;}
+  .review-top{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+  .review-avatar{
+    width:34px;height:34px;border-radius:50%;background:var(--ink);color:#fff;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;
+  }
+  .review-top strong{font-size:13.5px;display:block;}
+  .review-stars{font-size:12px;color:var(--orange);}
+  .review-card p{font-size:13.5px;opacity:0.8;margin-bottom:10px;}
+  .review-meta{font-size:11px;opacity:0.5;font-weight:600;}
+
+  footer{padding:24px 20px;border-top:1px solid var(--line);font-size:11.5px;opacity:0.55;text-align:center;}
+
+  /* ================= DESKTOP LAYOUT ================= */
+  @media (min-width:900px){
+    .page{max-width:1120px;box-shadow:none;border:1px solid var(--line);border-radius:18px;overflow:hidden;margin:32px auto;}
+
+    .topbar,header{padding-left:40px;padding-right:40px;}
+
+    .top{
+      grid-template-columns:1fr 1fr;
+      column-gap:56px;
+      grid-template-areas:
+        "media title"
+        "media rating"
+        "media checklist"
+        "media benefits"
+        "thumbs guarantee"
+        "thumbs notif"
+        "thumbs packs"
+        "thumbs stock"
+        "thumbs cta";
+      padding:40px 40px 0;
+    }
+    .g-media{padding:0;align-self:start;position:sticky;top:24px;}
+    .hero-img{aspect-ratio:1/1;border-radius:20px;}
+    .badge-free{top:14px;left:14px;}
+    .g-thumbs{align-self:start;}
+    .thumbs{padding:14px 0 0;}
+
+    .g-title{padding:0;}
+    .g-title h1{font-size:32px;}
+    .g-rating{padding:14px 0 0;}
+    .g-checklist{padding:20px 0 0;}
+    .checklist li{font-size:15px;}
+    .benefits{grid-template-columns:1fr 1fr;padding:22px 0 0;gap:12px;}
+    .guarantee-row{justify-content:flex-start;gap:32px;padding:20px 0;text-align:left;}
+    .guarantee-row span{flex:none;}
+    .notif{margin:0 0 4px;}
+    .packs{padding:12px 0 0;}
+    .g-stock{padding:16px 0;}
+    .g-cta{padding:0 0 40px;}
+    .cta-btn{padding:18px;font-size:16px;}
+
+    .transform{padding:56px 40px;display:grid;grid-template-columns:1fr 1.1fr;gap:48px;align-items:center;}
+    .transform img{margin-bottom:0;aspect-ratio:4/3;}
+    .transform h2{font-size:26px;}
+    .transform p{font-size:15px;max-width:440px;}
+
+    .proof{padding:56px 40px;}
+    .proof h2{font-size:24px;max-width:560px;margin:0 auto 8px;}
+    .proof .count{font-size:14px;}
+
+    .reviews{padding:16px 40px 56px;}
+    .reviews-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:28px;}
+    .reviews-head h2{font-size:26px;margin-bottom:0;}
+    .reviews-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+
+    footer{padding:28px 40px;}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="topbar"><span>BIENVENIDO A <b>ARO</b> · +8.000 JUGADORES</span><span>STOCK LIMITADO</span></div>
+
+  <header>
+    <nav>
+      <span class="icons">☰</span>
+      <div class="logo">ARO●</div>
+      <span class="icons">
+        🔍
+        <span class="cart-wrap">🛒<span class="cart-badge" id="cartBadge">0</span></span>
+      </span>
+    </nav>
+  </header>
+
+  <div class="top">
+
+    <div class="g-media">
+      <span class="badge-free">🎁 ENVÍO GRATIS</span>
+      <div class="hero-img">
+        <img id="mainImg" src="https://images.unsplash.com/photo-1519861531473-9200262188bf?q=80&w=900&auto=format&fit=crop" alt="Pelota de básquet ARO">
+      </div>
+    </div>
+
+    <div class="g-thumbs">
+      <div class="thumbs">
+        <div class="thumb active" onclick="setImg(this,'https://images.unsplash.com/photo-1519861531473-9200262188bf?q=80&w=900&auto=format&fit=crop')">
+          <img src="https://images.unsplash.com/photo-1519861531473-9200262188bf?q=80&w=200&auto=format&fit=crop" alt="Pelota ARO">
+        </div>
+        <div class="thumb" onclick="setImg(this,'https://images.unsplash.com/photo-1608245449230-4ac19066d2d0?q=80&w=900&auto=format&fit=crop')">
+          <img src="https://images.unsplash.com/photo-1608245449230-4ac19066d2d0?q=80&w=200&auto=format&fit=crop" alt="Textura de la pelota">
+        </div>
+        <div class="thumb" onclick="setImg(this,'https://images.unsplash.com/photo-1518063319789-7217e6706b04?q=80&w=900&auto=format&fit=crop')">
+          <img src="https://images.unsplash.com/photo-1518063319789-7217e6706b04?q=80&w=200&auto=format&fit=crop" alt="Pelota indoor">
+        </div>
+        <div class="thumb" onclick="setImg(this,'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=900&auto=format&fit=crop')">
+          <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=200&auto=format&fit=crop" alt="Jugador en la cancha">
+        </div>
+      </div>
+    </div>
+
+    <div class="g-benefits">
+      <div class="benefits">
+        <div class="benefit"><span class="ic">🖐️</span>Grip real, ni con las manos sudadas</div>
+        <div class="benefit"><span class="ic">🏀</span>Bote parejo en cemento y parquet</div>
+        <div class="benefit"><span class="ic">🛡️</span>Cuero reforzado, no se pela</div>
+        <div class="benefit"><span class="ic">✅</span>Probada en torneos 3x3</div>
+      </div>
+    </div>
+
+    <div class="g-guarantee">
+      <div class="guarantee-row">
+        <span>🛡️ Garantía de bote 2 años</span>
+        <span>🚚 Envío gratis</span>
+      </div>
+    </div>
+
+    <div class="g-notif">
+      <div class="notif">
+        <div class="dot">N</div>
+        <div>
+          <strong>Nombre 4 de Mendoza</strong>
+          <p>Compró ARO Street</p>
+          <span>hace 20 min · Compra verificada ✓</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="g-title">
+      <h1>ARO Street — la pelota que no te traiciona en el último tiro</h1>
+    </div>
+
+    <div class="g-rating">
+      <div class="rating">★★★★★ 4.9 <span>(1.842 reseñas)</span></div>
+    </div>
+
+    <div class="g-checklist">
+      <ul class="checklist">
+        <li>Goma reforzada, aguanta cemento y asfalto sin pelarse</li>
+        <li>Textura probada seis meses en canchas de barrio reales</li>
+        <li>Bote parejo en cualquier superficie, sin sorpresas</li>
+        <li>Costuras profundas para mejor control en el manejo</li>
+      </ul>
+    </div>
+
+    <div class="g-packs">
+      <div class="packs">
+        <button class="pack" data-price="24900" data-name="1 pelota (ARO Street)" onclick="choosePack(this)">
+          <div class="pack-left"><span class="radio"></span><div><div class="name">1 pelota</div><div class="sub">ARO Street</div></div></div>
+          <div class="price"><div class="now">$24.900</div></div>
+        </button>
+        <button class="pack chosen" data-price="41900" data-name="Pack x2" onclick="choosePack(this)">
+          <span class="badge">Más elegido</span>
+          <div class="pack-left"><span class="radio"></span><div><div class="name">Pack x2</div><div class="sub">Una de repuesto</div></div></div>
+          <div class="price"><div class="now">$41.900</div><div class="old">$49.800</div></div>
+        </button>
+        <button class="pack" data-price="57900" data-name="Pack x3" onclick="choosePack(this)">
+          <div class="pack-left"><span class="radio"></span><div><div class="name">Pack x3</div><div class="sub">Para todo el equipo</div></div></div>
+          <div class="price"><div class="now">$57.900</div><div class="old">$74.700</div></div>
+        </button>
+      </div>
+    </div>
+
+    <div class="g-stock">
+      <div class="stock-bar"><div class="fill"></div></div>
+      <p>¡Se está agotando! 82% del stock vendido</p>
+    </div>
+
+    <div class="g-cta">
+      <button class="cta-btn" id="ctaBtn" onclick="addToCart()">Agregar al carrito — $41.900</button>
+    </div>
+
+  </div>
+
+  <div class="transform">
+    <img src="https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=900&auto=format&fit=crop" alt="Jugador entrenando en la cancha">
+    <div>
+      <div class="tag">● PARTIDO 4+</div>
+      <h2>El agarre sigue igual aunque el partido ya lleve una hora.</h2>
+      <p>No se resbala cuando más importa: en el último cuarto, con las manos sudadas y la cancha a pleno sol.</p>
+    </div>
+  </div>
+
+  <div class="proof">
+    <h2>Miles de jugadores de barrio ya la sumaron a su equipo</h2>
+    <div class="count">+5.000 jugadores cada fin de semana</div>
+    <div class="avatars">
+      <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop" alt="Jugador">
+      <img src="https://images.unsplash.com/photo-1547347298-4074fc3086f0?q=80&w=200&auto=format&fit=crop" alt="Jugador">
+      <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=200&auto=format&fit=crop" alt="Jugador">
+      <img src="https://images.unsplash.com/photo-1531891437562-4301cf35b7e4?q=80&w=200&auto=format&fit=crop" alt="Jugador">
+    </div>
+  </div>
+
+  <div class="reviews">
+    <div class="reviews-head">
+      <h2>Lo que dicen los jugadores</h2>
+      <div class="reviews-rating">★★★★★ <span>4.9 sobre 1.842 reseñas</span></div>
+    </div>
+    <div class="reviews-grid">
+      <div class="review-card">
+        <div class="review-top">
+          <div class="review-avatar">F</div>
+          <div>
+            <strong>Franco R.</strong>
+            <div class="review-stars">★★★★★</div>
+          </div>
+        </div>
+        <p>Juego 3x3 todos los fines de semana y es la primera pelota que no se me resbala de las manos ni con la cancha caliente.</p>
+        <span class="review-meta">Compra verificada ✓ · hace 2 semanas</span>
+      </div>
+      <div class="review-card">
+        <div class="review-top">
+          <div class="review-avatar">L</div>
+          <div>
+            <strong>Lucía M.</strong>
+            <div class="review-stars">★★★★★</div>
+          </div>
+        </div>
+        <p>Le compré el pack x2 a mi hermano para el cumple. El bote es parejo hasta en cemento, se nota la diferencia con una pelota común.</p>
+        <span class="review-meta">Compra verificada ✓ · hace 1 mes</span>
+      </div>
+      <div class="review-card">
+        <div class="review-top">
+          <div class="review-avatar">D</div>
+          <div>
+            <strong>Diego S.</strong>
+            <div class="review-stars">★★★★☆</div>
+          </div>
+        </div>
+        <p>Muy buena calidad de cuero, aguanta bien el uso diario. Le bajo una estrella porque tardó un poco más de lo esperado en llegar.</p>
+        <span class="review-meta">Compra verificada ✓ · hace 3 semanas</span>
+      </div>
+      <div class="review-card">
+        <div class="review-top">
+          <div class="review-avatar">C</div>
+          <div>
+            <strong>Camila T.</strong>
+            <div class="review-stars">★★★★★</div>
+          </div>
+        </div>
+        <p>La usamos para entrenar en el club y ya llevan meses de uso intensivo sin pelarse ni perder el agarre.</p>
+        <span class="review-meta">Compra verificada ✓ · hace 5 días</span>
+      </div>
+    </div>
+  </div>
+
+  <footer>© 2026 ARO · Cancha de barrio, calidad de torneo</footer>
+
+  <div class="toast" id="toast">✔ <span id="toastText">Agregado al carrito</span></div>
+
+</div>
+
+<script>
+  function setImg(el, src){
+    document.getElementById('mainImg').src = src;
+    document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  function choosePack(el){
+    document.querySelectorAll('.pack').forEach(p => p.classList.remove('chosen'));
+    el.classList.add('chosen');
+    var price = Number(el.dataset.price).toLocaleString('es-AR');
+    document.getElementById('ctaBtn').textContent = 'Agregar al carrito — $' + price;
+    document.getElementById('ctaBtn').dataset.name = el.dataset.name;
+  }
+
+  var cartCount = 0;
+  function addToCart(){
+    cartCount++;
+    var badge = document.getElementById('cartBadge');
+    badge.textContent = cartCount;
+    badge.classList.add('show');
+
+    var chosen = document.querySelector('.pack.chosen');
+    var name = chosen ? chosen.dataset.name : 'Pack x2';
+
+    document.getElementById('toastText').textContent = 'Agregado: ' + name;
+    var toast = document.getElementById('toast');
+    toast.classList.add('show');
+    clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 2200);
+  }
+</script>
+
+</body>
+</html>
