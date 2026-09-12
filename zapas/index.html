@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ÑANDÚ — Zapatillas de running ultralivianas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#14171B; --ink-soft:#20242A; --steel:#5B6169;
+    --sand:#EFEAE0; --paper:#FBFAF7;
+    --volt:#D4FF3F; --volt-deep:#9FCC1A;
+    --coral:#FF4F32; --coral-deep:#DE3A20;
+    --line:rgba(20,23,27,0.12);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--sand);color:var(--ink);font-family:'Inter',sans-serif;line-height:1.5;}
+  h1,h2,h3,.display{font-family:'Anton',sans-serif;font-weight:400;letter-spacing:0.01em;text-transform:uppercase;}
+  a{color:inherit;text-decoration:none;}
+  img{display:block;max-width:100%;}
+  .page{max-width:480px;margin:0 auto;background:var(--paper);min-height:100vh;position:relative;overflow:hidden;}
+
+  /* ================= TOPBAR / HEADER ================= */
+  .topbar{background:var(--ink);color:var(--volt);font-size:11.5px;font-weight:700;padding:9px 18px;
+    display:flex;justify-content:space-between;gap:8px;}
+  .topbar span:last-child{color:#fff;opacity:0.7;font-weight:600;}
+
+  header{padding:16px 20px;background:var(--paper);border-bottom:3px solid var(--ink);}
+  nav{display:flex;justify-content:space-between;align-items:center;}
+  .logo{font-family:'Anton',sans-serif;font-size:24px;letter-spacing:0.02em;}
+  .logo span{color:var(--coral);}
+  .icons{display:flex;gap:18px;font-size:18px;align-items:center;}
+  .cart-wrap{position:relative;}
+  .cart-badge{position:absolute;top:-9px;right:-11px;background:var(--coral);color:#fff;
+    font-size:10px;font-weight:800;width:17px;height:17px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;font-family:'Inter';opacity:0;transform:scale(0);
+    transition:transform .25s;}
+  .cart-badge.show{opacity:1;transform:scale(1);}
+
+  /* ================= HERO ================= */
+  .hero{position:relative;background:var(--ink);padding:0 0 0;overflow:hidden;}
+  .hero-clip{position:relative;aspect-ratio:1/1;background:var(--volt);
+    clip-path:polygon(0 0,100% 0,100% 82%,0 100%);}
+  .hero-clip img{width:100%;height:100%;object-fit:cover;mix-blend-mode:multiply;opacity:0.94;}
+  .hero-tag{position:absolute;top:16px;left:18px;background:var(--coral);color:#fff;
+    font-size:11px;font-weight:800;padding:6px 12px;border-radius:99px;letter-spacing:0.02em;z-index:2;}
+  .hero-copy{padding:18px 20px 22px;color:#fff;}
+  .hero-copy h1{font-size:33px;line-height:0.98;color:var(--volt);}
+  .hero-copy p{font-size:14px;color:#C7CBD1;margin-top:10px;max-width:34ch;}
+
+  .thumbs{display:flex;gap:8px;padding:14px 20px 0;background:var(--paper);}
+  .thumb{width:58px;height:58px;border-radius:10px;overflow:hidden;flex-shrink:0;cursor:pointer;
+    border:2px solid transparent;opacity:0.55;transition:.15s;background:var(--sand);}
+  .thumb img{width:100%;height:100%;object-fit:cover;}
+  .thumb.active{border-color:var(--ink);opacity:1;}
+
+  /* ================= STATS STRIP ================= */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);background:var(--ink);color:#fff;
+    margin-top:16px;}
+  .stat{padding:16px 6px;text-align:center;border-right:1px solid rgba(255,255,255,0.1);}
+  .stat:last-child{border-right:none;}
+  .stat b{display:block;font-family:'Anton',sans-serif;font-size:24px;color:var(--volt);line-height:1;}
+  .stat span{display:block;font-size:9.5px;color:#9BA1A8;margin-top:5px;font-weight:600;letter-spacing:0.02em;}
+
+  /* ================= BENEFITS ================= */
+  .benefits{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--ink);}
+  .benefit{padding:20px 16px;font-size:13px;font-weight:600;line-height:1.35;}
+  .benefit .ic{font-size:22px;display:block;margin-bottom:10px;}
+  .benefit:nth-child(1){background:var(--volt);color:var(--ink);}
+  .benefit:nth-child(2){background:var(--coral);color:#fff;}
+  .benefit:nth-child(3){background:#fff;color:var(--ink);}
+  .benefit:nth-child(4){background:var(--ink-soft);color:var(--volt);}
+
+  /* ================= DETAIL / CHECKLIST ================= */
+  .detail{padding:26px 20px 6px;}
+  .detail h2{font-size:22px;line-height:1.15;margin-bottom:12px;}
+  .rating{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--coral);margin-bottom:18px;}
+  .rating .stars{letter-spacing:1px;}
+  .rating span{color:var(--steel);font-weight:500;}
+  .checklist{list-style:none;}
+  .checklist li{display:flex;gap:10px;font-size:14px;padding:8px 0;align-items:flex-start;border-bottom:1px dashed var(--line);}
+  .checklist li:last-child{border-bottom:none;}
+  .checklist li::before{content:"→";color:var(--coral);font-weight:800;flex-shrink:0;font-size:15px;}
+
+  /* ================= COLOR + SIZE PICKER ================= */
+  .picker{padding:22px 20px 4px;}
+  .picker h3{font-size:12.5px;letter-spacing:0.03em;color:var(--steel);font-family:'Inter';font-weight:700;margin-bottom:10px;text-transform:none;}
+  .colorways{display:flex;gap:10px;margin-bottom:22px;}
+  .cway{width:38px;height:38px;border-radius:50%;border:3px solid transparent;cursor:pointer;position:relative;transition:.15s;}
+  .cway.active{border-color:var(--ink);transform:scale(1.08);}
+  .cway[data-c="grafito"]{background:#2B2E33;}
+  .cway[data-c="nieve"]{background:#F2F1EC;box-shadow:inset 0 0 0 1px var(--line);}
+  .cway[data-c="pampa"]{background:#6E8F4E;}
+  .cway-name{font-size:11px;color:var(--steel);margin-left:4px;}
+  .sizes{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;margin-bottom:6px;}
+  .size{border:2px solid var(--line);border-radius:8px;padding:9px 0;text-align:center;font-size:13px;
+    font-weight:700;cursor:pointer;transition:.15s;background:#fff;}
+  .size.active{border-color:var(--ink);background:var(--ink);color:var(--volt);}
+  .size.sold{opacity:0.3;text-decoration:line-through;cursor:not-allowed;}
+
+  /* ================= TECH GRID ================= */
+  .tech{padding:26px 20px;background:var(--ink);color:#fff;}
+  .tech h2{font-size:19px;margin-bottom:16px;color:var(--volt);}
+  .tech-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+  .tech-item{background:var(--ink-soft);border-radius:12px;padding:14px;}
+  .tech-item .ic{font-size:20px;display:block;margin-bottom:8px;}
+  .tech-item b{display:block;font-size:12.5px;font-weight:700;margin-bottom:3px;}
+  .tech-item span{font-size:11px;color:#9BA1A8;line-height:1.4;display:block;}
+
+  /* ================= PACKS ================= */
+  .packs{display:flex;flex-direction:column;gap:10px;padding:24px 20px 6px;}
+  .packs-head{font-size:12.5px;color:var(--steel);font-weight:700;margin-bottom:4px;}
+  .pack{border:2px solid var(--line);border-radius:14px;padding:14px 16px;
+    display:flex;justify-content:space-between;align-items:center;position:relative;
+    cursor:pointer;background:#fff;transition:.15s;font:inherit;text-align:left;width:100%;}
+  .pack.chosen{border-color:var(--coral);background:rgba(255,79,50,0.05);}
+  .pack .badge{position:absolute;top:-11px;left:16px;background:var(--coral);color:#fff;
+    font-size:10.5px;font-weight:700;padding:3px 10px;border-radius:99px;}
+  .pack .name{font-size:14px;font-weight:800;color:var(--ink);}
+  .pack .sub{font-size:12px;color:var(--steel);}
+  .pack .price{text-align:right;}
+  .pack .now{font-size:17px;font-weight:800;color:var(--ink);}
+  .pack .old{font-size:12px;text-decoration:line-through;opacity:0.5;}
+  .pack .radio{width:18px;height:18px;border-radius:50%;border:2px solid var(--line);flex-shrink:0;
+    margin-right:10px;position:relative;}
+  .pack.chosen .radio{border-color:var(--coral);}
+  .pack.chosen .radio::after{content:"";position:absolute;inset:3px;border-radius:50%;background:var(--coral);}
+  .pack-left{display:flex;align-items:center;}
+
+  .stock{margin:20px 20px 0;}
+  .stock-bar{height:8px;background:var(--line);border-radius:99px;overflow:hidden;margin-bottom:7px;}
+  .stock-bar .fill{height:100%;width:82%;background:var(--coral);}
+  .stock p{font-size:12px;font-weight:700;color:var(--ink);}
+
+  .cta-wrap{padding:16px 20px 24px;}
+  .cta-btn{display:block;width:100%;text-align:center;background:var(--coral);color:#fff;
+    padding:17px;border-radius:12px;font-weight:800;font-size:15px;border:none;cursor:pointer;
+    font-family:'Inter';transition:background .15s, transform .1s;text-transform:uppercase;letter-spacing:0.02em;}
+  .cta-btn:hover{background:var(--coral-deep);}
+  .cta-btn:active{transform:scale(0.98);}
+  .cta-btn.added{background:var(--ink);}
+  .cta-note{text-align:center;font-size:11.5px;color:var(--steel);margin-top:9px;}
+
+  .toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,140%);
+    background:var(--ink);color:var(--volt);padding:12px 20px;border-radius:99px;font-size:13px;font-weight:700;
+    display:flex;align-items:center;gap:8px;transition:transform .3s ease;z-index:50;white-space:nowrap;
+    box-shadow:0 10px 24px rgba(0,0,0,0.35);}
+  .toast.show{transform:translate(-50%,0);}
+
+  /* ================= TRANSFORM ================= */
+  .transform{position:relative;background:var(--volt);padding:30px 20px;overflow:hidden;}
+  .transform img{width:100%;border-radius:14px;aspect-ratio:16/11;object-fit:cover;margin-bottom:16px;}
+  .transform .tag{font-size:12px;font-weight:800;color:var(--coral-deep);}
+  .transform h2{font-size:21px;margin:8px 0 10px;line-height:1.15;color:var(--ink);}
+  .transform p{font-size:13.5px;color:var(--ink-soft);opacity:0.85;}
+
+  /* ================= REVIEWS ================= */
+  .reviews{padding:30px 20px 10px;background:var(--paper);}
+  .reviews-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:18px;gap:10px;}
+  .reviews-head h2{font-size:21px;line-height:1.1;}
+  .reviews-score{text-align:right;flex-shrink:0;}
+  .reviews-score b{font-family:'Anton',sans-serif;font-size:30px;display:block;color:var(--coral);line-height:1;}
+  .reviews-score span{font-size:10.5px;color:var(--steel);font-weight:600;}
+  .reviews-grid{display:flex;flex-direction:column;gap:12px;}
+  .review-card{border-radius:14px;padding:15px 16px;}
+  .review-card:nth-child(odd){background:var(--ink);color:#fff;}
+  .review-card:nth-child(even){background:#fff;border:2px solid var(--line);}
+  .review-top{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+  .review-avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;flex-shrink:0;}
+  .review-name{font-size:13.5px;font-weight:800;}
+  .review-meta{font-size:11px;opacity:0.6;}
+  .review-card:nth-child(odd) .review-meta{color:#9BA1A8;}
+  .review-stars{color:var(--volt);font-size:12.5px;margin-bottom:2px;}
+  .review-card:nth-child(even) .review-stars{color:var(--coral);}
+  .review-text{font-size:13.5px;opacity:0.92;line-height:1.5;margin-top:6px;}
+
+  /* ================= FAQ ================= */
+  .faq{padding:26px 20px 10px;}
+  .faq h2{font-size:20px;margin-bottom:14px;}
+  .faq-item{border-bottom:1px solid var(--line);}
+  .faq-item summary{padding:14px 4px;font-size:13.5px;font-weight:700;cursor:pointer;list-style:none;
+    display:flex;justify-content:space-between;align-items:center;}
+  .faq-item summary::-webkit-details-marker{display:none;}
+  .faq-item summary::after{content:"+";font-size:20px;color:var(--coral);font-weight:400;flex-shrink:0;margin-left:10px;}
+  .faq-item[open] summary::after{content:"–";}
+  .faq-item p{font-size:13px;color:var(--steel);padding:0 4px 16px;line-height:1.55;}
+
+  /* ================= FOOTER ================= */
+  footer{padding:26px 20px;background:var(--ink);color:#9BA1A8;font-size:11.5px;text-align:center;}
+  footer .flogo{font-family:'Anton',sans-serif;color:var(--volt);font-size:18px;margin-bottom:6px;}
+
+  /* ================= AJUSTE PC / CELULAR ================= */
+  .pdp-grid{display:block;}
+  .media-col, .info-col{display:contents;}
+
+  body.is-desktop{background:#0F1114;}
+  body.is-desktop .page{max-width:1080px;box-shadow:0 30px 90px rgba(0,0,0,0.5);}
+  body.is-desktop .pdp-grid{display:grid;grid-template-columns:1.05fr 1fr;column-gap:0;}
+  body.is-desktop .media-col{grid-column:1;grid-row:1;position:sticky;top:0;align-self:start;height:100vh;
+    display:flex;flex-direction:column;}
+  body.is-desktop .hero{flex:1;display:flex;flex-direction:column;}
+  body.is-desktop .hero-clip{flex:1;aspect-ratio:auto;clip-path:polygon(0 0,100% 0,100% 92%,0 100%);}
+  body.is-desktop .info-col{grid-column:2;grid-row:1;}
+  body.is-desktop .hero-copy h1{font-size:44px;}
+  body.is-desktop .detail h2{font-size:28px;}
+  body.is-desktop .benefits{grid-template-columns:repeat(4,1fr);}
+  body.is-desktop .tech-grid{grid-template-columns:repeat(4,1fr);}
+  body.is-desktop .transform,
+  body.is-desktop .reviews,
+  body.is-desktop .faq,
+  footer{grid-column:1 / -1;}
+  body.is-desktop .transform{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center;padding:46px 40px;}
+  body.is-desktop .transform img{margin-bottom:0;aspect-ratio:4/3;}
+  body.is-desktop .reviews{padding:40px 40px 20px;}
+  body.is-desktop .reviews-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+  body.is-desktop .faq{padding:30px 40px 20px;max-width:760px;}
+  body.is-desktop .stats,
+  body.is-desktop .thumbs{padding-left:0;}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="topbar"><span>ÑANDÚ RUNNING · +12.000 CORREDORES</span><span>ENVÍO GRATIS 24HS</span></div>
+
+  <header>
+    <nav>
+      <span class="icons">☰</span>
+      <div class="logo">ÑAND<span>Ú</span></div>
+      <span class="icons">🔍<span class="cart-wrap">🛒<span class="cart-badge" id="cartBadge">0</span></span></span>
+    </nav>
+  </header>
+
+  <div class="pdp-grid">
+  <div class="media-col">
+
+  <div class="hero">
+    <div class="hero-clip">
+      <span class="hero-tag">🪶 210g — la más liviana de la línea</span>
+      <img id="mainImg" src="https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?q=80&w=900&auto=format&fit=crop" alt="Zapatilla de running ÑANDÚ">
+    </div>
+    <div class="hero-copy">
+      <h1>Livianas como si no las tuvieras puestas</h1>
+      <p>La ÑANDÚ Aire X1 devuelve energía en cada pisada para que corras tus primeros 5K y los últimos 5K exactamente igual.</p>
+    </div>
+  </div>
+
+  <div class="thumbs">
+    <div class="thumb active" onclick="setImg(this,'https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?q=80&w=900&auto=format&fit=crop')">
+      <img src="https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?q=80&w=200&auto=format&fit=crop" alt="Vista superior">
+    </div>
+    <div class="thumb" onclick="setImg(this,'https://images.unsplash.com/photo-1465453869711-7e174808ace9?q=80&w=900&auto=format&fit=crop')">
+      <img src="https://images.unsplash.com/photo-1465453869711-7e174808ace9?q=80&w=200&auto=format&fit=crop" alt="Par completo">
+    </div>
+    <div class="thumb" onclick="setImg(this,'https://images.unsplash.com/photo-1520256862855-398228c41684?q=80&w=900&auto=format&fit=crop')">
+      <img src="https://images.unsplash.com/photo-1520256862855-398228c41684?q=80&w=200&auto=format&fit=crop" alt="Detalle de suela">
+    </div>
+    <div class="thumb" onclick="setImg(this,'https://images.unsplash.com/photo-1552346154-21d32810aba3?q=80&w=900&auto=format&fit=crop')">
+      <img src="https://images.unsplash.com/photo-1552346154-21d32810aba3?q=80&w=200&auto=format&fit=crop" alt="En movimiento">
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><b>210g</b><span>PESO POR PIE</span></div>
+    <div class="stat"><b>8mm</b><span>DROP</span></div>
+    <div class="stat"><b>320K</b><span>KM DE VIDA ÚTIL</span></div>
+    <div class="stat"><b>4.9</b><span>PROMEDIO</span></div>
+  </div>
+
+  </div><!-- /media-col -->
+
+  <div class="info-col">
+
+  <div class="benefits">
+    <div class="benefit"><span class="ic">🪶</span>Espuma ReactFoam: devuelve energía en cada pisada</div>
+    <div class="benefit"><span class="ic">🌀</span>Suela GripTrack, agarre en asfalto y en tierra</div>
+    <div class="benefit"><span class="ic">🧦</span>Malla FlyKnit sin costuras, se adapta al pie</div>
+    <div class="benefit"><span class="ic">♻️</span>40% de materiales reciclados en cada par</div>
+  </div>
+
+  <div class="detail">
+    <h2>ÑANDÚ Aire X1 — running de largas distancias</h2>
+    <div class="rating"><span class="stars">★★★★★</span> 4.9 <span>(1.842 reseñas verificadas)</span></div>
+    <ul class="checklist">
+      <li>Amortiguación progresiva pensada para asfalto y trail liviano</li>
+      <li>Horma anatómica desarrollada con podólogos deportivos</li>
+      <li>Plantilla extraíble compatible con plantillas ortopédicas</li>
+      <li>Resistente a lluvia liviana, seca en menos de 40 minutos</li>
+    </ul>
+  </div>
+
+  <div class="picker">
+    <h3>Color — Grafito</h3>
+    <div class="colorways">
+      <span class="cway active" data-c="grafito" onclick="chooseColor(this,'Grafito')"></span>
+      <span class="cway" data-c="nieve" onclick="chooseColor(this,'Blanco Nieve')"></span>
+      <span class="cway" data-c="pampa" onclick="chooseColor(this,'Verde Pampa')"></span>
+    </div>
+    <h3>Talle (US)</h3>
+    <div class="sizes" id="sizeGrid">
+      <div class="size" onclick="chooseSize(this)">38</div>
+      <div class="size" onclick="chooseSize(this)">39</div>
+      <div class="size active" onclick="chooseSize(this)">40</div>
+      <div class="size" onclick="chooseSize(this)">41</div>
+      <div class="size" onclick="chooseSize(this)">42</div>
+      <div class="size sold">43</div>
+      <div class="size" onclick="chooseSize(this)">44</div>
+      <div class="size" onclick="chooseSize(this)">45</div>
+    </div>
+  </div>
+
+  <div class="tech">
+    <h2>La tecnología, por dentro</h2>
+    <div class="tech-grid">
+      <div class="tech-item"><span class="ic">🫧</span><b>ReactFoam</b><span>Espuma de doble densidad que amortigua y devuelve energía</span></div>
+      <div class="tech-item"><span class="ic">🕸️</span><b>FlyKnit</b><span>Malla tejida sin costuras, transpira y no roza</span></div>
+      <div class="tech-item"><span class="ic">🦶</span><b>GripTrack</b><span>Suela de carbono con tacos multidireccionales</span></div>
+      <div class="tech-item"><span class="ic">🧵</span><b>ComfortFit</b><span>Plantilla de memoria que se moldea a tu pisada</span></div>
+    </div>
+  </div>
+
+  <div class="packs">
+    <div class="packs-head">Elegí tu combo</div>
+    <button class="pack" data-price="89900" data-name="1 par" onclick="choosePack(this)">
+      <div class="pack-left"><span class="radio"></span><div><div class="name">1 par</div><div class="sub">Para vos</div></div></div>
+      <div class="price"><div class="now">$89.900</div></div>
+    </button>
+    <button class="pack chosen" data-price="149900" data-name="2 pares" onclick="choosePack(this)">
+      <span class="badge">Más elegido</span>
+      <div class="pack-left"><span class="radio"></span><div><div class="name">2 pares</div><div class="sub">Vos + alguien más</div></div></div>
+      <div class="price"><div class="now">$149.900</div><div class="old">$179.800</div></div>
+    </button>
+    <button class="pack" data-price="199900" data-name="Pack familiar (3 pares)" onclick="choosePack(this)">
+      <div class="pack-left"><span class="radio"></span><div><div class="name">Pack familiar</div><div class="sub">3 pares · mayor ahorro</div></div></div>
+      <div class="price"><div class="now">$199.900</div><div class="old">$269.700</div></div>
+    </button>
+  </div>
+
+  <div class="stock">
+    <div class="stock-bar"><div class="fill"></div></div>
+    <p>Quedan pocos pares en el talle 40 — 82% vendido</p>
+  </div>
+
+  <div class="cta-wrap">
+    <button class="cta-btn" id="ctaBtn" onclick="addToCart()">Agregar al carrito — $149.900</button>
+    <p class="cta-note">Envío gratis · Cambios sin costo dentro de los 30 días</p>
+  </div>
+
+  </div><!-- /info-col -->
+  </div><!-- /pdp-grid -->
+
+  <div class="transform">
+    <img src="https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?q=80&w=900&auto=format&fit=crop" alt="Corredor entrenando al amanecer">
+    <div class="tag">● SEMANA 6 DE ENTRENAMIENTO</div>
+    <h2>De no aguantar 2km, a terminar tu primer 10K sin caminar.</h2>
+    <p>No es magia: es una zapatilla que no te pesa en el pie 40, para que el cansancio venga de tus piernas y no de lo que llevás puesto.</p>
+  </div>
+
+  <div class="reviews">
+    <div class="reviews-head">
+      <h2>Lo que dicen los que ya corren con ÑANDÚ</h2>
+      <div class="reviews-score"><b>4.9</b><span>1.842 reseñas</span></div>
+    </div>
+    <div class="reviews-grid">
+      <div class="review-card">
+        <div class="review-top">
+          <img class="review-avatar" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop" alt="Cliente">
+          <div><div class="review-name">Nahuel D.</div><div class="review-meta">Corre 15km por semana · CABA</div></div>
+        </div>
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">Bajé casi 2 minutos mi marca en los 10K solo por el cambio de zapatilla. El drop de 8mm se siente perfecto para asfalto.</p>
+      </div>
+      <div class="review-card">
+        <div class="review-top">
+          <img class="review-avatar" src="https://images.unsplash.com/photo-1552053831-71594a27632d?q=80&w=200&auto=format&fit=crop" alt="Cliente">
+          <div><div class="review-name">Rocío A.</div><div class="review-meta">Primera maratón en octubre · Rosario</div></div>
+        </div>
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">Las uso para entrenar mi primera maratón. A los 20km todavía no sentí que se aplasten, y eso que peso 78kg.</p>
+      </div>
+      <div class="review-card">
+        <div class="review-top">
+          <img class="review-avatar" src="https://images.unsplash.com/photo-1517849845537-4d257902861a?q=80&w=200&auto=format&fit=crop" alt="Cliente">
+          <div><div class="review-name">Tomás V.</div><div class="review-meta">Trail runner · Bariloche</div></div>
+        </div>
+        <div class="review-stars">★★★★☆</div>
+        <p class="review-text">El agarre en tierra húmeda me sorprendió, no las esperaba tan buenas fuera del asfalto. Le bajo media estrella porque me quedaron justas.</p>
+      </div>
+      <div class="review-card">
+        <div class="review-top">
+          <img class="review-avatar" src="https://images.unsplash.com/photo-1587764379873-97837921fd44?q=80&w=200&auto=format&fit=crop" alt="Cliente">
+          <div><div class="review-name">Camila S.</div><div class="review-meta">Volviendo a correr después de una lesión · Mendoza</div></div>
+        </div>
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">Mi traumatólogo me recomendó una zapatilla con más amortiguación. Volví a correr sin dolor en la rodilla, cambio total.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="faq">
+    <h2>Preguntas frecuentes</h2>
+    <details class="faq-item" open>
+      <summary>¿Cómo sé mi talle?</summary>
+      <p>La ÑANDÚ Aire X1 calza igual al número habitual. Si tenés el pie ancho, te recomendamos pedir medio talle más.</p>
+    </details>
+    <details class="faq-item">
+      <summary>¿En cuánto tiempo llega?</summary>
+      <p>Envío gratis a todo el país, entre 24 y 72 horas hábiles según tu ubicación.</p>
+    </details>
+    <details class="faq-item">
+      <summary>¿Puedo cambiarlas si no me quedan bien?</summary>
+      <p>Sí, tenés 30 días desde que las recibís para cambiar el talle o el color sin costo.</p>
+    </details>
+    <details class="faq-item">
+      <summary>¿Sirven para trail o solo para asfalto?</summary>
+      <p>Están pensadas principalmente para asfalto y caminos compactos. Para trail técnico con barro recomendamos nuestra línea GripTrack Trail.</p>
+    </details>
+  </div>
+
+  <footer>
+    <div class="flogo">ÑANDÚ</div>
+    © 2026 ÑANDÚ Running · Diseñadas para correr, no para guardar en la caja
+  </footer>
+
+  <div class="toast" id="toast">✔ <span id="toastText">Agregado al carrito</span></div>
+
+</div>
+
+<script>
+  // ---- Detección PC vs celular para ajustar el tamaño/layout ----
+  function applyDeviceClass(){
+    var isCoarsePointer = window.matchMedia('(pointer:coarse)').matches;
+    var isNarrow = window.innerWidth < 860;
+    var isMobile = isNarrow || isCoarsePointer;
+    document.body.classList.toggle('is-mobile', isMobile);
+    document.body.classList.toggle('is-desktop', !isMobile);
+  }
+  applyDeviceClass();
+  window.addEventListener('resize', applyDeviceClass);
+
+  function setImg(el, src){
+    document.getElementById('mainImg').src = src;
+    document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  function chooseColor(el, name){
+    document.querySelectorAll('.cway').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    document.querySelector('.picker h3').textContent = 'Color — ' + name;
+  }
+
+  function chooseSize(el){
+    document.querySelectorAll('.size').forEach(s => s.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  function choosePack(el){
+    document.querySelectorAll('.pack').forEach(p => p.classList.remove('chosen'));
+    el.classList.add('chosen');
+    var price = Number(el.dataset.price).toLocaleString('es-AR');
+    document.getElementById('ctaBtn').textContent = 'Agregar al carrito — $' + price;
+    document.getElementById('ctaBtn').dataset.name = el.dataset.name;
+  }
+
+  var cartCount = 0;
+  function addToCart(){
+    cartCount++;
+    var badge = document.getElementById('cartBadge');
+    badge.textContent = cartCount;
+    badge.classList.add('show');
+
+    var btn = document.getElementById('ctaBtn');
+    var chosen = document.querySelector('.pack.chosen');
+    var name = chosen ? chosen.dataset.name : '2 pares';
+    var size = document.querySelector('.size.active');
+    var sizeText = size ? ' (talle ' + size.textContent + ')' : '';
+
+    document.getElementById('toastText').textContent = 'Agregado: ' + name + sizeText;
+    var toast = document.getElementById('toast');
+    toast.classList.add('show');
+    clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 2200);
+
+    btn.classList.add('added');
+    setTimeout(function(){ btn.classList.remove('added'); }, 400);
+  }
+</script>
+
+</body>
+</html>
